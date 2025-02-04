@@ -263,11 +263,19 @@ public class OrleansHubLifetimeManager<THub> : HubLifetimeManager<THub>, IDispos
 		return group.Remove(connectionId);
 	}
 
-	private Task SendLocal(HubConnectionContext connection, HubInvocationMessage hubMessage)
+	private async Task SendLocal(HubConnectionContext connection, HubInvocationMessage hubMessage)
 	{
 		_logger.LogDebug("Sending local message to connection {connectionId} on hub {hubName} (serverId: {serverId})",
 			connection.ConnectionId, _hubName, _serverId);
-		return connection.WriteAsync(hubMessage).AsTask();
+		try
+		{
+			await connection.WriteAsync(hubMessage).AsTask();
+		}
+		catch (Exception)
+		{
+			_logger.LogError("Sending local message to connection {connectionId} on hub {hubName} (serverId: {serverId}) failed",
+				connection.ConnectionId, _hubName, _serverId);
+		}
 	}
 
 	private Task SendExternal(string connectionId, InvocationMessage hubMessage)
