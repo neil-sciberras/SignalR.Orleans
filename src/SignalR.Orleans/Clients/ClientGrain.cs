@@ -40,7 +40,10 @@ internal class ClientGrain : Grain<ClientState>, IClientGrain
 		_streamProvider = this.GetStreamProvider(Constants.STREAM_PROVIDER);
 
 		if (State.ServerId == Guid.Empty)
+		{
+			_logger.LogDebug("4535 - Skipping stream setup as serverId is empty");
 			return;
+		}
 
 		SetupStreams();
 
@@ -87,10 +90,14 @@ internal class ClientGrain : Grain<ClientState>, IClientGrain
 
 	public async Task OnConnect(Guid serverId)
 	{
+		_logger.LogDebug("4535 - OnConnect - connection {connectionId} to server {serverId}", _keyData.Id, serverId);
+
 		State.ServerId = serverId;
 		SetupStreams();
 		await _serverDisconnectedStream.SubscribeAsync(async (connId, _) => await OnDisconnect(ClientDisconnectReasons.ServerDisconnected));
 		await WriteStateAsync();
+
+		_logger.LogDebug("4535 - OnConnect - connection {connectionId} to server {serverId} - finished", _keyData.Id, serverId);
 	}
 
 	public async Task OnDisconnect(string reason = null)
@@ -120,6 +127,9 @@ internal class ClientGrain : Grain<ClientState>, IClientGrain
 			Constants.STREAM_SEND_REPLICAS,
 			this.GetPrimaryKeyString()
 		);
+
+		_logger.LogDebug("4535 - SetupStreams - Server stream {serverStreamId}", _serverStream.StreamId);
+
 		_serverDisconnectedStream = _streamProvider.GetStream<Guid>(StreamId.Create(Constants.SERVER_DISCONNECTED, State.ServerId));
 	}
 }
