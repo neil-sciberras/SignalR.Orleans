@@ -48,14 +48,20 @@ internal static class StreamReplicaExtensions
 		}
 	}
 
-	public static async Task UnsubscribeAllSubscriptionHandlers<T>(this IAsyncStream<T> stream)
+	public static async Task UnsubscribeAllSubscriptionHandlers<T>(this IAsyncStream<T> stream, string connectionId, ILogger? logger = null)
 	{
 		var subscriptions = await stream.GetAllSubscriptionHandles();
+
+		logger?.LogDebug("4535 - UnsubscribeAllSubscriptionHandlers - {streamId} {connectionId} {subscriptionCount}",
+			stream.StreamId, connectionId, subscriptions?.Count ?? 0);
+
 		if (subscriptions?.Count > 0)
 		{
 			var tasks = subscriptions.Select(x => x.UnsubscribeAsync());
 			await Task.WhenAll(tasks);
 		}
+
+		logger?.LogDebug("4535 - UnsubscribeAllSubscriptionHandlers done - {streamId} {connectionId} ", stream.StreamId, connectionId);
 	}
 }
 

@@ -120,7 +120,7 @@ internal abstract class ConnectionGrain<TGrainState> : Grain<TGrainState>, IConn
 		{
 			foreach (var connectionId in _connectionStreamToUnsubscribe.ToList())
 			{
-				await GetClientDisconnectStream(connectionId).UnsubscribeAllSubscriptionHandlers();
+				await GetClientDisconnectStream(connectionId).UnsubscribeAllSubscriptionHandlers(connectionId, _logger);
 				_connectionStreamToUnsubscribe.Remove(connectionId);
 			}
 		}
