@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- system -->
+    <PackageVersion Include="Microsoft.Orleans.Core.Abstractions" Version="8.2.0" />
     <PackageVersion Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
     <!-- microsoft packages -->
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="8.0.1" />

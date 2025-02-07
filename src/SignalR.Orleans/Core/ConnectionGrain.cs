@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Protocol;
-using Orleans.Runtime;
+using Orleans.Placement;
 
 namespace SignalR.Orleans.Core;
 
@@ -9,6 +9,7 @@ namespace SignalR.Orleans.Core;
 /// This will be used to send messages to all connections in the group e.g. Group -> Client -> HubManager
 /// </summary>
 /// <typeparam name="TGrainState"></typeparam>
+[Immovable]
 internal abstract class ConnectionGrain<TGrainState> : Grain<TGrainState>, IConnectionGrain
 	where TGrainState : ConnectionState, new()
 {
