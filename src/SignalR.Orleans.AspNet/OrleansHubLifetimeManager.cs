@@ -116,6 +116,8 @@ public class OrleansHubLifetimeManager<THub> : HubLifetimeManager<THub>, IDispos
 
 	private Task ProcessServerMessage(ClientMessage message)
 	{
+		_logger.LogDebug("4535 - ProcessServerMessage - connection {connectionId}, serverId {serverId}", message.ConnectionId, _serverId);
+
 		var connection = _connections[message.ConnectionId];
 		if (connection == null)
 		{
@@ -263,11 +265,22 @@ public class OrleansHubLifetimeManager<THub> : HubLifetimeManager<THub>, IDispos
 		return group.Remove(connectionId);
 	}
 
-	private Task SendLocal(HubConnectionContext connection, HubInvocationMessage hubMessage)
+	private async Task SendLocal(HubConnectionContext connection, HubInvocationMessage hubMessage)
 	{
 		_logger.LogDebug("Sending local message to connection {connectionId} on hub {hubName} (serverId: {serverId})",
 			connection.ConnectionId, _hubName, _serverId);
-		return connection.WriteAsync(hubMessage).AsTask();
+		try
+		{
+			await connection.WriteAsync(hubMessage);
+
+			_logger.LogDebug("4535 - Sending local message to connection {connectionId} on hub {hubName} (serverId: {serverId}) succeeded",
+				connection.ConnectionId, _hubName, _serverId);
+		}
+		catch (Exception)
+		{
+			_logger.LogError("Sending local message to connection {connectionId} on hub {hubName} (serverId: {serverId}) failed",
+				connection.ConnectionId, _hubName, _serverId);
+		}
 	}
 
 	private Task SendExternal(string connectionId, InvocationMessage hubMessage)
