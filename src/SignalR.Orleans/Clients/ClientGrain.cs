@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR.Protocol;
+using Orleans.Placement;
 using Orleans.Runtime;
 using SignalR.Orleans.Core;
 
@@ -19,6 +20,7 @@ internal class ClientState
 /// (via stream) to the connected server. e.g. '{hubName}:{connectionId}' ('hero:xyz123')
 /// </summary>
 [StorageProvider(ProviderName = Constants.STORAGE_PROVIDER)]
+[Immovable]
 internal class ClientGrain : Grain<ClientState>, IClientGrain
 {
 	private readonly ILogger<ClientGrain> _logger;

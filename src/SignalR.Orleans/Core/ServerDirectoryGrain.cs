@@ -1,4 +1,6 @@
-﻿namespace SignalR.Orleans.Core;
+﻿using Orleans.Placement;
+
+namespace SignalR.Orleans.Core;
 
 public interface IServerDirectoryGrain : IGrainWithIntegerKey
 {
@@ -13,6 +15,7 @@ public class ServerDirectoryState
 	public Dictionary<Guid, DateTime> Servers { get; set; } = new();
 }
 
+[Immovable]
 [StorageProvider(ProviderName = Constants.STORAGE_PROVIDER)]
 public class ServerDirectoryGrain : Grain<ServerDirectoryState>, IServerDirectoryGrain
 {
